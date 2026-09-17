@@ -1,0 +1,18 @@
+# Environments
+venv/
+env/
+
+# Secrets and Configs
+.env
+
+# Python Caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Raw Data (We ignore the heavy PDFs, but KEEP .lancedb so the app boots instantly)
+data/raw_pdfs/
+
+# OS Files
+.DS_Store
+Thumbs.db
