@@ -1,4 +1,5 @@
 import os
+import time
 from pydantic import BaseModel, Field
 from typing import List
 from google import genai
@@ -55,21 +56,30 @@ class ReasoningEngine:
         Your 'evidence_citation' must explicitly reference the Source Title and Page provided in the evidence above.
         """
 
-        try:
-            response = self.client.models.generate_content(
-                model='gemini-3.6-flash',
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=ScientificRecommendation,
-                    temperature=0.2, # Low temp for factual accuracy
-                ),
-            )
-            return response.parsed
-            
-        except Exception as e:
-            print(f"Reasoning Engine failed: {e}")
-            return None
+        # Fast and high-quota models prioritized first to save retry time
+        models_chain = ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-3.6-flash']
+
+        for model_name in models_chain:
+            try:
+                response = self.client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=ScientificRecommendation,
+                        temperature=0.2, # Low temp for factual accuracy
+                    ),
+                )
+                if response.parsed:
+                    print(f"[*] Successfully generated recommendation using {model_name}")
+                    return response.parsed
+                
+            except Exception as e:
+                err_str = str(e)
+                print(f"[ReasoningEngine] Model {model_name} failed: {err_str[:100]}")
+                continue
+
+        return None
 
 # --- Local Testing ---
 if __name__ == "__main__":
@@ -78,7 +88,6 @@ if __name__ == "__main__":
     tracker = StateTracker()
     engine = ReasoningEngine()
     
-    # Simulate the exact Turn 2 scenario we just ran
     query = "I'm noticing a lot of topsoil washing away, and I think pesticides are killing the good bugs in the dirt. My land is monoculture wheat with low rainfall."
     print("Extracting State...")
     state, keywords = tracker.update_state_from_query(query)
