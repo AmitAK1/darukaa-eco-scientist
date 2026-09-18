@@ -32,11 +32,9 @@ I am an AI environmental research assistant grounded in empirical **FAO** and **
 ---
 
 ### 💡 Suggested Prompts to Try:
-- *"Monoculture wheat farm with declining soil fauna and heavy pesticide use under low rainfall."*
-- *"Degraded pasture land in a semi-arid zone with low soil organic carbon and erosion."*
-- *"Intensive agrochemical runoff affecting microbial biomass and water retention in drought conditions."*
-
-*Describe your land's parameters (aim for at least 3 variables) to begin a multi-metric scientific assessment.*"""
+- *"I operate a monoculture wheat farm in a low rainfall region. Recently, I've noticed a severe decline in beneficial soil fauna due to heavy pesticide application."*
+- *"My degraded pasture land is experiencing severe topsoil erosion. We are in a semi-arid climate, and our soil organic carbon levels are critically low."*
+- *"I am dealing with severe topsoil erosion, and my soil pH has become highly acidic."""
 
 
 def is_greeting(text: str) -> bool:
